@@ -1,74 +1,108 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weak Cipher Detector</title>
+    <title>SSL/TLS Certificate Analyzer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
         }
-        .secure {
-            color: green;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
         }
-        .not-secure {
-            color: red;
+        h1 {
+            text-align: center;
+            color: #333;
         }
-        .warnings, .details {
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
             margin-top: 20px;
         }
-        .details p {
-            margin: 5px 0;
-        }
         .grade {
+            font-size: 48px;
             font-weight: bold;
-            font-size: 1.2em;
+            text-align: center;
+        }
+        .grade.A { color: green; }
+        .grade.B { color: lightgreen; }
+        .grade.C { color: orange; }
+        .grade.D { color: orangered; }
+        .grade.F { color: red; }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 5px 0;
+        }
+        .warning {
+            color: red;
         }
     </style>
 </head>
 <body>
-    <h1>Weak Cipher Detector</h1>
+    <div class="container">
+        <h1>SSL/TLS Certificate Analyzer</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="hostname">Enter Domain Name</label>
+            <input type="text" id="hostname" name="hostname" required placeholder="e.g., github.com">
+            <button type="submit" class="btn">Analyze Certificate</button>
+        </form>
 
-    <form method="POST">
-        {% csrf_token %}
-        <label for="hostname">Enter the domain name to analyze</label>
-        <input type="text" id="hostname" name="hostname" required>
-        <button type="submit">Analyze</button>
-    </form>
+        {% if hostname %}
+        <div class="result">
+            <h2>Analysis for {{ hostname }}</h2>
 
-    {% if secure is not None %}
-        <h2>Analysis Results</h2>
-        <p class="grade">Grade: {{ grade }}</p>
-        {% if secure %}
-            <p class="secure">The website {{ hostname }} appears to be SECURE.</p>
-            <p>It should be safe to enter your data and navigate on this site.</p>
-        {% else %}
-            <p class="not-secure">The website {{ hostname }} may NOT BE SECURE. Exercise caution.</p>
-            <p>Exercise caution when entering sensitive data on this site.</p>
-        {% endif %}
+            <p><strong>Issuer:</strong> {{ issuer }}</p>
+            <p><strong>Subject:</strong> {{ subject }}</p>
+            <p><strong>Valid From:</strong> {{ valid_before }}</p>
+            <p><strong>Valid Until:</strong> {{ valid_after }}</p>
+            <p><strong>Key Size:</strong> {{ key_size }} bits</p>
+            <p><strong>Signature Algorithm:</strong> {{ signature_algorithm }}</p>
+            <p class="grade {{ grade }}">Grade: {{ grade }}</p>
 
-        <div class="warnings">
+            {% if warnings %}
             <h3>Warnings:</h3>
             <ul>
                 {% for warning in warnings %}
-                    <li>{{ warning }}</li>
+                <li class="warning">{{ warning }}</li>
                 {% endfor %}
             </ul>
+            {% else %}
+            <p>No warnings found. The certificate is secure.</p>
+            {% endif %}
         </div>
-
-        <div class="details">
-            <h3>Additional Details:</h3>
-            <p><strong>Certificate Version:</strong> {{ cert_version }}</p>
-            <p><strong>Serial Number:</strong> {{ serial_number }}</p>
-            <p><strong>Issuer:</strong> {{ issuer }}</p>
-            <p><strong>Subject:</strong> {{ subject }}</p>
-            <p><strong>Not Valid Before:</strong> {{ valid_before }}</p>
-            <p><strong>Not Valid After:</strong> {{ valid_after }}</p>
-            <p><strong>Key Size:</strong> {{ key_size }} bits</p>
-            <p><strong>Signature Algorithm:</strong> {{ signature_algorithm }}</p>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 </body>
 </html>

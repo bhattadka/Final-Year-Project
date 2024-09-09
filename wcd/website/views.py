@@ -1,10 +1,11 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
 import ssl
 import socket
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+from datetime import datetime, timezone
+from django.utils.timezone import make_aware
 from datetime import datetime, timezone
 
 # Function to retrieve the server certificate
@@ -39,14 +40,18 @@ def analyze_certificate(request):
             is_secure = True
             warnings = []
 
-            # Get the current time in UTC
+            # Get the current time in UTC (timezone-aware)
             now = datetime.now(timezone.utc)
 
+            # Ensure certificate times are timezone-aware
+            not_valid_before = make_aware(cert.not_valid_before) if cert.not_valid_before.tzinfo is None else cert.not_valid_before
+            not_valid_after = make_aware(cert.not_valid_after) if cert.not_valid_after.tzinfo is None else cert.not_valid_after
+
             # Check if the certificate is expired or not yet valid
-            if cert.not_valid_after_utc < now:
+            if not_valid_after < now:
                 is_secure = False
                 warnings.append("Certificate has expired")
-            elif cert.not_valid_before_utc > now:
+            elif not_valid_before > now:
                 is_secure = False
                 warnings.append("Certificate is not yet valid")
 
@@ -71,14 +76,14 @@ def analyze_certificate(request):
                 'secure': is_secure,
                 'warnings': warnings,
                 'hostname': hostname,
-                'valid_before': cert.not_valid_before_utc,
-                'valid_after': cert.not_valid_after_utc,
+                'valid_before': not_valid_before,
+                'valid_after': not_valid_after,
                 'key_size': key_size,
                 'signature_algorithm': signature_algorithm,
                 'cert_version': cert.version,
                 'serial_number': cert.serial_number,
-                'issuer': cert.issuer,
-                'subject': cert.subject,
+                'issuer': cert.issuer.rfc4514_string(),
+                'subject': cert.subject.rfc4514_string(),
                 'grade': grade
             }
 
