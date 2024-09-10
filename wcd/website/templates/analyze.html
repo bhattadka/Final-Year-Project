@@ -7,102 +7,109 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 20px;
             padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
+            background-color: #f5f5f5;
         }
         h1 {
-            text-align: center;
-            color: #333;
+            color: #000000;
         }
-        label {
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn:hover {
-            background-color: #0056b3;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
         .result {
             margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
         }
         .grade {
-            font-size: 48px;
+            font-size: 2em;
             font-weight: bold;
-            text-align: center;
+            color: green;
         }
-        .grade.A { color: green; }
-        .grade.B { color: lightgreen; }
-        .grade.C { color: orange; }
-        .grade.D { color: orangered; }
-        .grade.F { color: red; }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        ul li {
-            padding: 5px 0;
-        }
-        .warning {
+        .warnings {
             color: red;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        input[type="text"] {
+            width: 80%;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #1a21a9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            align-items : center;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>SSL/TLS Certificate Analyzer</h1>
+
+        <!-- Input form to analyze the SSL certificate -->
         <form method="POST">
             {% csrf_token %}
-            <label for="hostname">Enter Domain Name</label>
-            <input type="text" id="hostname" name="hostname" required placeholder="e.g., github.com">
-            <button type="submit" class="btn">Analyze Certificate</button>
+            <label for="hostname">Enter website hostname:</label><br>
+            <input type="text" id="hostname" name="hostname" placeholder="example.com" required>
+            <br>
+            <button type="submit">Analyze Certificate</button>
         </form>
 
+        <!-- Show analysis results only if details are available -->
         {% if hostname %}
         <div class="result">
-            <h2>Analysis for {{ hostname }}</h2>
+            <h2>Analysis Results for {{ hostname }}</h2>
+            <p><strong>Grade:</strong> <span class="grade">{{ grade }}</span></p>
 
-            <p><strong>Issuer:</strong> {{ issuer }}</p>
-            <p><strong>Subject:</strong> {{ subject }}</p>
-            <p><strong>Valid From:</strong> {{ valid_before }}</p>
-            <p><strong>Valid Until:</strong> {{ valid_after }}</p>
-            <p><strong>Key Size:</strong> {{ key_size }} bits</p>
-            <p><strong>Signature Algorithm:</strong> {{ signature_algorithm }}</p>
-            <p class="grade {{ grade }}">Grade: {{ grade }}</p>
-
-            {% if warnings %}
-            <h3>Warnings:</h3>
+            <h3>Certificate Details:</h3>
             <ul>
-                {% for warning in warnings %}
-                <li class="warning">{{ warning }}</li>
-                {% endfor %}
+                <li><strong>Issuer:</strong> {{ issuer }}</li>
+                <li><strong>Subject:</strong> {{ subject }}</li>
+                <li><strong>Valid From:</strong> {{ valid_before }}</li>
+                <li><strong>Valid Until:</strong> {{ valid_after }}</li>
+                <li><strong>Key Size:</strong> {{ key_size }} bits</li>
+                <li><strong>Signature Algorithm:</strong> {{ signature_algorithm }}</li>
+                <li><strong>Serial Number:</strong> {{ serial_number }}</li>
+                <li><strong>Version:</strong> {{ cert_version }}</li>
             </ul>
+
+            <!-- Display warnings, if any -->
+            {% if warnings %}
+            <div class="warnings">
+                <h3>Warnings:</h3>
+                <ul>
+                    {% for warning in warnings %}
+                    <li>{{ warning }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
             {% else %}
-            <p>No warnings found. The certificate is secure.</p>
+            <p>No warnings. The certificate appears secure.</p>
             {% endif %}
         </div>
         {% endif %}
     </div>
+
 </body>
 </html>

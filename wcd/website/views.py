@@ -6,7 +6,6 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timezone
 from django.utils.timezone import make_aware
-from datetime import datetime, timezone
 
 # Function to retrieve the server certificate
 def get_server_certificate(hostname, port=443):
@@ -16,8 +15,32 @@ def get_server_certificate(hostname, port=443):
             der_cert = secure_sock.getpeercert(binary_form=True)
             return x509.load_der_x509_certificate(der_cert, default_backend())
 
-# Function to determine grade based on certificate analysis
-def grade_certificate(is_secure, warnings):
+# Function to determine grade based on certificate analysis and CertView guidelines
+def grade_certificate(is_secure, warnings, hostname_matches, revoked, legacy_cipher, forward_secrecy, cbc_cipher):
+    """
+    CertView will not penalize:
+    - Hostname mismatch (SSL Labs drops to 'T')
+    - Revoked certificates (SSL Labs drops to 'F')
+    
+    CertView differences:
+    - Legacy 64-bit block ciphers (drops grade to C)
+    - CBC ciphers with TLS 1.2 or lower (drops grade to F due to GoldenDoodle)
+    - Does not reward forward secrecy
+    """
+    
+    # Check for specific conditions
+    if revoked:
+        warnings.append("Certificate has been revoked")
+    
+    if legacy_cipher:
+        warnings.append("Using legacy 64-bit block ciphers")
+        is_secure = False
+    
+    if cbc_cipher:
+        warnings.append("Using CBC ciphers with TLS 1.2 or below (vulnerable to GoldenDoodle)")
+        is_secure = False
+
+    # Determine grade based on warnings and security status
     if is_secure and not warnings:
         return 'A'
     elif not is_secure and len(warnings) == 1:
@@ -68,8 +91,15 @@ def analyze_certificate(request):
                 is_secure = False
                 warnings.append(f"Weak signature algorithm: {signature_algorithm}")
 
-            # Determine the grade
-            grade = grade_certificate(is_secure, warnings)
+            # Simulated CertView-specific checks (can be implemented based on actual data)
+            hostname_matches = True  # Replace with actual check if needed
+            revoked = False  # Replace with actual check for revoked certificates
+            legacy_cipher = True  # Replace with actual check for legacy ciphers
+            forward_secrecy = False  # CertView does not penalize for missing forward secrecy
+            cbc_cipher = True  # Replace with actual check for CBC ciphers in TLS 1.2 or lower
+
+            # Determine the grade using CertView rules
+            grade = grade_certificate(is_secure, warnings, hostname_matches, revoked, legacy_cipher, forward_secrecy, cbc_cipher)
 
             # Collect certificate information for rendering
             details = {
