@@ -101,10 +101,17 @@ def analyze_certificate(request):
             # Determine the grade using CertView rules
             grade = grade_certificate(is_secure, warnings, hostname_matches, revoked, legacy_cipher, forward_secrecy, cbc_cipher)
 
+            bar_percentages = {
+                'certificate': 80 if grade == 'A' else 60 if grade == 'B' else 40,
+                'protocol_support': 70,
+                'key_exchange': 60,
+                'cipher_strength': 50,
+            }
             # Collect certificate information for rendering
             details = {
                 'secure': is_secure,
                 'warnings': warnings,
+                'bar_percentages': bar_percentages,
                 'hostname': hostname,
                 'valid_before': not_valid_before,
                 'valid_after': not_valid_after,

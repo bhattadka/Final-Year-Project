@@ -3,113 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSL/TLS Certificate Analyzer</title>
+    <title>SSL/TLS Certificate Analysis</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            border-radius: 8px;
+            background-color: #ffffff; /* White background for the form */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+            border: 1px solid #ddd; /* Light border color */
         }
-        h1 {
-            color: #000000;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-        }
-        .grade {
-            font-size: 2em;
-            font-weight: bold;
-            color: green;
-        }
-        .warnings {
-            color: red;
-        }
+
         form {
-            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        input[type="text"], button {
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #4a90e2; /* Blue color for the label */
+        }
+
+        input[type="text"] {
             padding: 10px;
             font-size: 16px;
-            margin: 5px 0;
-            border-radius: 5px;
+            border: 2px solid #4a90e2; /* Blue border for the input field */
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease; /* Smooth transition for focus effect */
         }
-        input[type="text"] {
-            width: 80%;
-            border: 1px solid #ccc;
+
+        input[type="text"]:focus {
+            border-color: #007bff; /* Darker blue on focus */
+            outline: none; /* Remove default outline */
         }
+
         button {
-            background-color: #1a21a9;
-            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff; /* White text color */
+            background-color: #4a90e2; /* Blue background color */
             border: none;
+            border-radius: 4px;
             cursor: pointer;
-            align-items : center;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: #357abd; /* Darker blue on hover */
+        }
+
+        button:focus {
+            outline: none; /* Remove default outline on focus */
+        }
+
+        .grade-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .grade-box {
+            background-color: #f4a742;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .bar-section {
+            margin-left: 20px;
+            width: 400px;
+        }
+
+        .bar-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background-color: #4caf50;
+        }
+
+        .label {
+            margin-bottom: 5px;
+        }
+
+        .warning-section {
+            margin-top: 30px;
+            color: red;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .form-container {
+            margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>SSL/TLS Certificate Analyzer</h1>
+    <h1>SSL/TLS Certificate Analyzer</h1>
 
-        <!-- Input form to analyze the SSL certificate -->
-        <form method="POST">
+    <div class="form-container"></div>
+        <form method="post" action="{% url 'analyze_certificate' %}">
             {% csrf_token %}
-            <label for="hostname">Enter website hostname:</label><br>
-            <input type="text" id="hostname" name="hostname" placeholder="example.com" required>
-            <br>
-            <button type="submit">Analyze Certificate</button>
+            <label for="hostname">Enter URL or Hostname:</label>
+            <input type="text" id="hostname" name="hostname" required>
+            <button type="submit">Analyze</button>
         </form>
-
-        <!-- Show analysis results only if details are available -->
-        {% if hostname %}
-        <div class="result">
-            <h2>Analysis Results for {{ hostname }}</h2>
-            <p><strong>Grade:</strong> <span class="grade">{{ grade }}</span></p>
-
-            <h3>Certificate Details:</h3>
-            <ul>
-                <li><strong>Issuer:</strong> {{ issuer }}</li>
-                <li><strong>Subject:</strong> {{ subject }}</li>
-                <li><strong>Valid From:</strong> {{ valid_before }}</li>
-                <li><strong>Valid Until:</strong> {{ valid_after }}</li>
-                <li><strong>Key Size:</strong> {{ key_size }} bits</li>
-                <li><strong>Signature Algorithm:</strong> {{ signature_algorithm }}</li>
-                <li><strong>Serial Number:</strong> {{ serial_number }}</li>
-                <li><strong>Version:</strong> {{ cert_version }}</li>
-            </ul>
-
-            <!-- Display warnings, if any -->
-            {% if warnings %}
-            <div class="warnings">
-                <h3>Warnings:</h3>
-                <ul>
-                    {% for warning in warnings %}
-                    <li>{{ warning }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% else %}
-            <p>No warnings. The certificate appears secure.</p>
-            {% endif %}
-        </div>
-        {% endif %}
     </div>
+    <H1> ANALYSIS REPORT </H1>
+    {% if grade %}
+        <div class="grade-section">
+            <div class="grade-box">
+                {{ grade }}
+            </div>
+            <div class="bar-section">
+                <div class="bar-wrapper">
+                    <div class="label">Certificate</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: {{ bar_percentages.certificate }}%;"></div>
+                    </div>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="label">Protocol Support</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: {{ bar_percentages.protocol_support }}%;"></div>
+                    </div>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="label">Key Exchange</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: {{ bar_percentages.key_exchange }}%;"></div>
+                    </div>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="label">Cipher Strength</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: {{ bar_percentages.cipher_strength }}%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Certificate Details</h2>
+        <table>
+            <tr>
+                <th>Issuer Name</th>
+                <td>{{ issuer }}</td>
+            </tr>
+            <tr>
+                <th>Subject</th>
+                <td>{{ subject }}</td>
+            </tr>
+            <tr>
+                <th>Valid From</th>
+                <td>{{ valid_before }}</td>
+            </tr>
+            <tr>
+                <th>Valid Until</th>
+                <td>{{ valid_after }}</td>
+            </tr>
+            <tr>
+                <th>Key Size</th>
+                <td>{{ key_size }} bits</td>
+            </tr>
+            <tr>
+                <th>Signature Algorithm</th>
+                <td>{{ signature_algorithm }}</td>
+            </tr>
+            <tr>
+                <th>Serial Number</th>
+                <td>{{ serial_number }}</td>
+            </tr>
+            <tr>
+                <th>Version</th>
+                <td>{{ cert_version }}</td>
+            </tr>
+        </table>
+        <h2>Warnings</h2>
+        <div class="warning-section">
+            
+            <table>
+                
+                <tbody>
+                    {% for warning in warnings %}
+                        <tr>
+                            <td>{{ warning }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
 
 </body>
 </html>
