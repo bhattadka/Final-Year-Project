@@ -3,11 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSL/TLS Analyzer Home</title>
+    <title>Home - Website Analysis</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 50px;
+            font-weight: bold;
+            color: #3471b1;
+            margin-bottom: 30px;
+            font-family: 'Courier New', Courier, monospace; /* Stylish font */
+            letter-spacing: 2px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .analyze-button {
+            padding: 15px 30px;
+            font-size: 20px;
+            color: #ffffff;
+            background-color: #a2195b;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .analyze-button:hover {
+            background-color: #750606;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the SSL/TLS Analyzer</h1>
-    <p>Enter the hostname in the URL like: <code>/analyze/yourhostname.com/</code> to start the analysis.</p>
+
+<div class="container">
+    <h1>Analyze Your Website Today</h1>
+    <p>Get instant insights into your website's SSL/TLS security.</p>
+    <a href="{% url 'analyze_certificate' %}" class="analyze-button">Start Analysis</a>
+
+
+    
+</div>
+
 </body>
 </html>
 

@@ -9,42 +9,6 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        .form-container {
-            width: 100%;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #ffffff; /* White background for the form */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
-            border: 1px solid #ddd; /* Light border color */
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #4a90e2; /* Blue color for the label */
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #4a90e2; /* Blue border for the input field */
-            border-radius: 4px;
-            margin-bottom: 20px;
-            transition: border-color 0.3s ease; /* Smooth transition for focus effect */
-        }
-
-        input[type="text"]:focus {
-            border-color: #007bff; /* Darker blue on focus */
-            outline: none; /* Remove default outline */
-        }
-
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -55,13 +19,57 @@
             cursor: pointer;
             transition: background-color 0.3s ease; /* Smooth transition for hover effect */
         }
-
-        button:hover {
-            background-color: #357abd; /* Darker blue on hover */
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
         }
 
-        button:focus {
-            outline: none; /* Remove default outline on focus */
+        .button:hover {
+            background-color: #357abd;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #4a90e2;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4a90e2;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
         }
 
         .grade-section {
@@ -128,7 +136,7 @@
             padding: 10px;
             text-align: left;
         }
-        
+
         .form-container {
             margin-bottom: 30px;
         }
@@ -137,8 +145,9 @@
 <body>
 
     <h1>SSL/TLS Certificate Analyzer</h1>
+    <a href="{% url 'grading_system' %}" class="button">Know more about grading system</a>
 
-    <div class="form-container"></div>
+    <div class="form-container">
         <form method="post" action="{% url 'analyze_certificate' %}">
             {% csrf_token %}
             <label for="hostname">Enter URL or Hostname:</label>
@@ -146,90 +155,111 @@
             <button type="submit">Analyze</button>
         </form>
     </div>
-    <H1> ANALYSIS REPORT </H1>
-    {% if grade %}
-        <div class="grade-section">
-            <div class="grade-box">
-                {{ grade }}
-            </div>
-            <div class="bar-section">
-                <div class="bar-wrapper">
-                    <div class="label">Certificate</div>
-                    <div class="bar">
-                        <div class="bar-fill" style="width: {{ bar_percentages.certificate }}%;"></div>
-                    </div>
-                </div>
-                <div class="bar-wrapper">
-                    <div class="label">Protocol Support</div>
-                    <div class="bar">
-                        <div class="bar-fill" style="width: {{ bar_percentages.protocol_support }}%;"></div>
-                    </div>
-                </div>
-                <div class="bar-wrapper">
-                    <div class="label">Key Exchange</div>
-                    <div class="bar">
-                        <div class="bar-fill" style="width: {{ bar_percentages.key_exchange }}%;"></div>
-                    </div>
-                </div>
-                <div class="bar-wrapper">
-                    <div class="label">Cipher Strength</div>
-                    <div class="bar">
-                        <div class="bar-fill" style="width: {{ bar_percentages.cipher_strength }}%;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <h2>Certificate Details</h2>
-        <table>
-            <tr>
-                <th>Issuer Name</th>
-                <td>{{ issuer }}</td>
-            </tr>
-            <tr>
-                <th>Subject</th>
-                <td>{{ subject }}</td>
-            </tr>
-            <tr>
-                <th>Valid From</th>
-                <td>{{ valid_before }}</td>
-            </tr>
-            <tr>
-                <th>Valid Until</th>
-                <td>{{ valid_after }}</td>
-            </tr>
-            <tr>
-                <th>Key Size</th>
-                <td>{{ key_size }} bits</td>
-            </tr>
-            <tr>
-                <th>Signature Algorithm</th>
-                <td>{{ signature_algorithm }}</td>
-            </tr>
-            <tr>
-                <th>Serial Number</th>
-                <td>{{ serial_number }}</td>
-            </tr>
-            <tr>
-                <th>Version</th>
-                <td>{{ cert_version }}</td>
-            </tr>
-        </table>
-        <h2>Warnings</h2>
-        <div class="warning-section">
-            
+    <h1 id="analysis-report-header">ANALYSIS REPORT</h1>
+    <div id="analysis-report" style="display: none;">  <!-- Wrap the analysis report content -->
+        {% if grade %}
+            <div class="grade-section">
+                <div class="grade-box">
+                    {{ grade }}
+                </div>
+                <div class="bar-section">
+                    <div class="bar-wrapper">
+                        <div class="label">Certificate</div>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: {{ bar_percentages.certificate }}%;"></div>
+                        </div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="label">Protocol Support</div>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: {{ bar_percentages.protocol_support }}%;"></div>
+                        </div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="label">Key Exchange</div>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: {{ bar_percentages.key_exchange }}%;"></div>
+                        </div>
+                    </div>
+                    <div class="bar-wrapper">
+                        <div class="label">Cipher Strength</div>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: {{ bar_percentages.cipher_strength }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Certificate Details</h2>
             <table>
-                
-                <tbody>
-                    {% for warning in warnings %}
-                        <tr>
-                            <td>{{ warning }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                <tr>
+                    <th>Issuer Name</th>
+                    <td>{{ issuer }}</td>
+                </tr>
+                <tr>
+                    <th>Subject</th>
+                    <td>{{ subject }}</td>
+                </tr>
+                <tr>
+                    <th>Valid From</th>
+                    <td>{{ valid_before }}</td>
+                </tr>
+                <tr>
+                    <th>Valid Until</th>
+                    <td>{{ valid_after }}</td>
+                </tr>
+                <tr>
+                    <th>Key Size</th>
+                    <td>{{ key_size }} bits</td>
+                </tr>
+                <tr>
+                    <th>Signature Algorithm</th>
+                    <td>{{ signature_algorithm }}</td>
+                </tr>
+                <tr>
+                    <th>Serial Number</th>
+                    <td>{{ serial_number }}</td>
+                </tr>
+                <tr>
+                    <th>Version</th>
+                    <td>{{ cert_version }}</td>
+                </tr>
             </table>
-        </div>
-    {% endif %}
+
+            <h2>Warnings</h2>
+            <div class="warning-section">
+                <table>
+                    <tbody>
+                        {% for warning in warnings %}
+                            <tr>
+                                <td>{{ warning }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Download Button -->
+            <button class="button" id="download-report-btn" style="margin-top: 20px;">Download Report as Image</button>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        document.getElementById('download-report-btn').addEventListener('click', function () {
+            html2canvas(document.getElementById('analysis-report')).then(function (canvas) {
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL("image/png");
+                link.download = 'analysis_report.png';
+                link.click();
+            });
+        });
+
+        // Show the analysis report when it is available
+        {% if grade %}
+            document.getElementById('analysis-report').style.display = 'block';
+        {% endif %}
+    </script>
 
 </body>
 </html>

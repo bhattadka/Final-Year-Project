@@ -7,6 +7,13 @@ from cryptography.hazmat.backends import default_backend
 from datetime import datetime, timezone
 from django.utils.timezone import make_aware
 
+def home(request):
+    return render(request, 'home.html')
+
+
+def grading_system(request):
+    return render(request, 'grading_system.html')
+
 # Function to retrieve the server certificate
 def get_server_certificate(hostname, port=443):
     context = ssl.create_default_context()
