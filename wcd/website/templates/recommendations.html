@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Recommendations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #4a90e2;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .back-button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <h1>SSL/TLS Grading System</h1>
+    <p>
+        upgrading to stronger cipher suites or renewing certificates
+    </p>
+
+    <a href="{% url 'analyze_certificate' %}" class="back-button">Back to Analyzer</a>
+</body>
+</html>

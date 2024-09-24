@@ -21,5 +21,7 @@ urlpatterns = [
     path('', views.home, name='home'),  # Home page as the default
     path('analyze/', views.analyze_certificate, name='analyze_certificate'),  # Analysis page
     path('grading-system/', views.grading_system, name='grading_system'),  # Grading system page
+    path('security-recommendations/', views.security_recommendations, name='security_recommendations'),
+ 
 ]
 

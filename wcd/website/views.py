@@ -14,6 +14,9 @@ def home(request):
 def grading_system(request):
     return render(request, 'grading_system.html')
 
+def security_recommendations(request):
+    return render(request, 'recommendations.html')
+
 # Function to retrieve the server certificate
 def get_server_certificate(hostname, port=443):
     context = ssl.create_default_context()
