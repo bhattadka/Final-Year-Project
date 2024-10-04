@@ -19,7 +19,7 @@
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/Priyanshi0912/Django-CRM.git
+git clone https://github.com/Priyanshi0912/FinalYearProject.git
 ```
 
 ## 2. Navigate to the Project Directory
@@ -84,42 +84,6 @@ http://127.0.0.1:8000
 ## Project Structure
 
 ```
-Django-CRM
-│
-├── dcrm
-│   ├── __pycache__
-│   ├── __init__.py
-│   ├── controllers/
-│   ├── setting.py
-│   └── urls.py
-│   └── wsgi.py
-│
-├── website
-│   ├── migrations
-|       ├── __pycache__
-|       ├── 0001_initail.py
-|       ├── __init__.py
-|   ├── template
-|       ├── add_record.html
-|       ├── base.html
-|       ├── footer.html
-|       ├── home.html
-|       ├── navbar.html
-|       ├── record.html
-|       ├── register.html
-|       ├── update_record.html
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── tests.py
-│   └── urls.py
-│   └── views.py
 
-│
-├── manage.py
-|
-└── mydb.py
 
 ```
