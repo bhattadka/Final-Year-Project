@@ -6,35 +6,41 @@
     <title>SSL/TLS Certificate Analysis</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #fff; /* White text color */
-            background-color: #4a90e2; /* Blue background color */
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-        }
-        .button {
-            margin-top: 20px;
-            margin-right: 5px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #070707; 
+            color: #f0f0f0; 
         }
 
-        .button:hover {
-            background-color: #357abd;
+        
+        h1 {
+            text-align: center;
+            color: #f2f2f5; 
+            margin-top: 20px;
+        }
+
+        
+        .navbar {
+            background-color: #477fc0; 
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #090909;
+            color: white;
         }
 
         .form-container {
@@ -43,9 +49,9 @@
             margin: 50px auto;
             padding: 20px;
             border-radius: 8px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ddd;
+            background-color: #1e1e1e; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #477fc0;
         }
 
         form {
@@ -66,11 +72,28 @@
             border-radius: 4px;
             margin-bottom: 20px;
             transition: border-color 0.3s ease;
+            background-color: #333;
+            color: white;
         }
 
         input[type="text"]:focus {
             border-color: #007bff;
             outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357abd;
         }
 
         .grade-section {
@@ -102,7 +125,7 @@
 
         .bar {
             width: 100%;
-            background-color: #e0e0e0;
+            background-color: #444;
             height: 20px;
             border-radius: 5px;
             overflow: hidden;
@@ -117,12 +140,6 @@
             margin-bottom: 5px;
         }
 
-        .warning-section {
-            margin-top: 30px;
-            color: red;
-            font-weight: bold;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -130,12 +147,27 @@
         }
 
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #4a90e2;
         }
 
         th, td {
             padding: 10px;
             text-align: left;
+        }
+
+        th {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        td {
+            background-color: #222;
+        }
+
+        .warning-section {
+            margin-top: 30px;
+            color: red;
+            font-weight: bold;
         }
 
         .form-container {
@@ -145,13 +177,14 @@
 </head>
 <body>
 
+    <!-- Navigation bar -->
+    <div class="navbar">
+        <a href="{% url 'home' %}"><b>Home</b></a>
+        <a href="{% url 'grading_system' %}"><b>Grading System</b></a>
+        <a href="{% url 'security_recommendations' %}"><b>Security Recommendations</b></a>
+    </div>
+
     <h1>SSL/TLS Certificate Analyzer</h1>
-    <a href="{% url 'home' %}" class="button"> Home </a>
-    <a href="{% url 'grading_system' %}" class="button">Know more about grading system</a>
-    <a href="{% url 'security_recommendations' %}" class="button">View Security Recommendations</a>
-
-
-    
 
     <div class="form-container">
         <form method="post" action="{% url 'analyze_certificate' %}">
@@ -162,13 +195,11 @@
         </form>
     </div>
 
-    <h1 id="analysis-report-header">ANALYSIS REPORT</h1>
-    <div id="analysis-report" style="display: none;">  <!-- Wrap the analysis report content -->
+    <h1 id="analysis-report-header" style="text-align:center;">ANALYSIS REPORT</h1>
+    <div id="analysis-report" style="display: none;">
         {% if grade %}
             <div class="grade-section">
-                <div class="grade-box">
-                    {{ grade }}
-                </div>
+                <div class="grade-box">{{ grade }}</div>
                 <div class="bar-section">
                     <div class="bar-wrapper">
                         <div class="label">Certificate</div>
@@ -197,54 +228,29 @@
                 </div>
             </div>
 
-            <h2>Certificate Details</h2>
+            <h2 style="color: #4a90e2;">Certificate Details</h2>
             <table>
-                <tr>
-                    <th>Issuer Name</th>
-                    <td>{{ issuer }}</td>
-                </tr>
-                <tr>
-                    <th>Subject</th>
-                    <td>{{ subject }}</td>
-                </tr>
-                <tr>
-                    <th>Valid From</th>
-                    <td>{{ valid_before }}</td>
-                </tr>
-                <tr>
-                    <th>Valid Until</th>
-                    <td>{{ valid_after }}</td>
-                </tr>
-                <tr>
-                    <th>Key Size</th>
-                    <td>{{ key_size }} bits</td>
-                </tr>
-                <tr>
-                    <th>Signature Algorithm</th>
-                    <td>{{ signature_algorithm }}</td>
-                </tr>
-                <tr>
-                    <th>Serial Number</th>
-                    <td>{{ serial_number }}</td>
-                </tr>
-                <tr>
-                    <th>Version</th>
-                    <td>{{ cert_version }}</td>
-                </tr>
+                <tr><th>Issuer Name</th><td>{{ issuer }}</td></tr>
+                <tr><th>Subject</th><td>{{ subject }}</td></tr>
+                <tr><th>Valid From</th><td>{{ valid_before }}</td></tr>
+                <tr><th>Valid Until</th><td>{{ valid_after }}</td></tr>
+                <tr><th>Key Size</th><td>{{ key_size }} bits</td></tr>
+                <tr><th>Signature Algorithm</th><td>{{ signature_algorithm }}</td></tr>
+                <tr><th>Serial Number</th><td>{{ serial_number }}</td></tr>
+                <tr><th>Version</th><td>{{ cert_version }}</td></tr>
             </table>
 
-            <h2>Warnings</h2>
+            <h2 style="color: #f4a742;">Warnings</h2>
             <div class="warning-section">
                 <table>
                     <tbody>
                         {% for warning in warnings %}
-                            <tr>
-                                <td>{{ warning }}</td>
-                            </tr>
+                            <tr><td>{{ warning }}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+            
             <!-- Download Button -->
             <button class="button" id="download-report-btn" style="margin-top: 20px;">Download Report as Image</button>
         {% endif %}
@@ -261,7 +267,6 @@
             });
         });
 
-        // Show the analysis report when it is available
         {% if grade %}
             document.getElementById('analysis-report').style.display = 'block';
         {% endif %}
